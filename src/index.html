@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verdl</title>
+  <link rel="icon" href="/Verdl-icon.png?v=2" type="image/png">
+  <link rel="shortcut icon" href="/Verdl-icon.ico?v=2" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="/main.js" defer></script>
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="app-logo">
+          <img src="/Verdl.png" alt="Verdl" width="48" height="48">
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="update-ytdlp-btn" class="btn btn-secondary" title="Update yt-dlp to latest version">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 2v6h-6"/>
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+            <path d="M3 22v-6h6"/>
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+          </svg>
+          Update
+        </button>
+        <div class="status-indicator" id="ytdlp-status">
+          <span class="status-dot"></span>
+          <span class="status-text">Checking...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- URL Input Section -->
+        <div class="sidebar-section">
+          <label class="section-label">YouTube URL</label>
+          <div class="url-input-container">
+            <input
+              type="text"
+              id="url-input"
+              class="url-input"
+              placeholder="Paste URL here..."
+              autocomplete="off"
+            />
+            <button id="fetch-btn" class="btn btn-primary" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+              Fetch
+            </button>
+          </div>
+          <div class="input-status" id="input-status"></div>
+        </div>
+
+        <!-- Format Selection -->
+        <div class="sidebar-section">
+          <label class="section-label">Format</label>
+          <div class="format-selector">
+            <button class="format-option active" data-format="video">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                <line x1="7" y1="2" x2="7" y2="22"/>
+                <line x1="17" y1="2" x2="17" y2="22"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <line x1="2" y1="7" x2="7" y2="7"/>
+                <line x1="2" y1="17" x2="7" y2="17"/>
+                <line x1="17" y1="17" x2="22" y2="17"/>
+                <line x1="17" y1="7" x2="22" y2="7"/>
+              </svg>
+              Video
+            </button>
+            <button class="format-option" data-format="audio">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+              </svg>
+              Audio MP3
+            </button>
+          </div>
+        </div>
+
+        <!-- Video Quality (only for video format) -->
+        <div class="sidebar-section" id="quality-section">
+          <label class="section-label">Quality</label>
+          <select id="quality-select" class="select-input">
+            <option value="4k">2160p (4K)</option>
+            <option value="1080p" selected>1080p (Full HD)</option>
+            <option value="720p">720p (HD)</option>
+            <option value="480p">480p (SD)</option>
+          </select>
+        </div>
+
+        <!-- Concurrent Downloads -->
+        <div class="sidebar-section">
+          <div class="slider-header">
+            <label class="section-label">Concurrent</label>
+            <span class="slider-value" id="concurrent-value">1</span>
+          </div>
+          <input
+            type="range"
+            id="concurrent-slider"
+            class="slider"
+            min="1"
+            max="5"
+            value="1"
+          />
+          <div class="slider-labels">
+            <span>1</span>
+            <span>3</span>
+            <span>5</span>
+          </div>
+        </div>
+
+        <!-- Output Path -->
+        <div class="sidebar-section">
+          <label class="section-label">Destination</label>
+          <div class="path-container">
+            <span class="path-text" id="output-path">Loading...</span>
+            <button class="btn-icon" id="change-path-btn" title="Change folder">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Downloads Section -->
+        <div class="sidebar-section downloads-section">
+          <div class="section-header">
+            <label class="section-label">Active Downloads</label>
+            <span class="badge" id="download-count">0</span>
+          </div>
+          <div class="downloads-list" id="downloads-list">
+            <div class="empty-state">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              <span>No active downloads</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Panel -->
+      <div class="main-panel">
+        <!-- Metadata Preview -->
+        <div class="metadata-panel" id="metadata-panel" style="display: none;">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                <line x1="7" y1="2" x2="7" y2="22"/>
+                <line x1="17" y1="2" x2="17" y2="22"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+              </svg>
+              <span id="playlist-title">Playlist</span>
+            </div>
+            <div class="panel-actions">
+              <div class="video-count" id="video-count">0 videos</div>
+              <button id="select-all-btn" class="btn-link">Select All</button>
+            </div>
+          </div>
+
+          <div class="video-list" id="video-list">
+            <!-- Videos will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-panel" id="empty-panel">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"/>
+            <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+          </svg>
+          <h2>Enter a YouTube URL to get started</h2>
+          <p>Paste a video or playlist URL to fetch metadata and begin downloading</p>
+        </div>
+
+        <!-- Download Action -->
+        <div class="action-bar" id="action-bar" style="display: none;">
+          <button id="download-all-btn" class="btn btn-large btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download All
+          </button>
+          <button id="cancel-btn" class="btn btn-large btn-danger" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            </svg>
+            Cancel All
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+</body>
+</html>
