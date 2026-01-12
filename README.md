@@ -37,7 +37,6 @@ Verdl embraces **refined minimalism** with professional polish:
 ### Core Functionality
 - **Single Video & Playlist Downloads** - Download individual videos or entire YouTube playlists
 - **Video Quality Options** - Choose from 4K, 1080p, 720p, or 480p
-- **Audio Extraction** - Convert videos to high-quality MP3 format
 - **Concurrent Downloads** - Control how many videos download simultaneously (1-5)
 - **Real-Time Progress** - Live download progress with detailed status updates
 - **Smart Cancellation** - Cancel individual downloads or all at once with proper cleanup
@@ -218,11 +217,8 @@ After fetching, you'll see:
 - Number of videos
 - List of all videos with titles and durations
 
-#### 4. Choose Format
-- **Video** - Downloads as MP4 (best available quality)
-- **Audio MP3** - Extracts high-quality audio only
-
-For video, select quality:
+#### 4. Choose Video Quality
+Select quality:
 - **4K** (2160p) - Ultra HD
 - **1080p** (Full HD) - Default
 - **720p** (HD) - Standard HD
@@ -248,9 +244,6 @@ Click **Download All** to start. Monitor progress in the sidebar under **Active 
 ---
 
 ## FAQ
-
-### Q: Does Verdl work with YouTube Music?
-**A:** Yes! Verdl can download YouTube Music videos and extract audio. Just paste the YouTube Music URL.
 
 ### Q: Can I download age-restricted videos?
 **A:** This depends on yt-dlp's capabilities. You may need to update yt-dlp using the "Update yt-dlp" button if you encounter issues.
@@ -705,7 +698,6 @@ Contributions are welcome! Please follow these guidelines:
 #### Initial Release Features
 - Single video and playlist downloads
 - Video quality selection (4K to 480p)
-- Audio extraction to MP3
 - Concurrent downloads control (1-5)
 - Real-time progress tracking
 - Download cancellation with cleanup
@@ -731,21 +723,6 @@ For issues, questions, or feature requests:
 - Check the [Troubleshooting](#troubleshooting) section
 - Read [BOT_DETECTION_SOLUTIONS.md](/BOT_DETECTION_SOLUTIONS.md) for bot detection help
 - Open an issue on GitHub
-
----
-
-## Roadmap
-
-### Planned Features
-- [ ] Custom download folder selection
-- [ ] Download history tracking
-- [ ] Subtitle download support
-- [ ] Playlist channel support
-- [ ] Dark/light theme toggle
-- [ ] Batch URL import
-- [ ] Download queue management
-- [ ] Automatic retry on failure
-- [ ] Format conversion options
 
 ---
 
