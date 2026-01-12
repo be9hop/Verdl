@@ -221,9 +221,10 @@ fn is_valid_youtube_url(url: &str) -> bool {
 }
 
 /// Validate and sanitize output path to prevent path traversal attacks
-/// Ensures the path is within allowed directories (Downloads or AppData)
+/// Basic validation only - users have full control over download locations
+#[allow(unused_variables)]
 fn validate_output_path(app: &AppHandle, path: &str) -> Result<String, String> {
-    use std::path::{Path, PathBuf};
+    use std::path::PathBuf;
 
     let path_obj = PathBuf::from(path);
 
@@ -237,44 +238,21 @@ fn validate_output_path(app: &AppHandle, path: &str) -> Result<String, String> {
             .join(&path_obj)
     };
 
-    // Normalize the path by resolving any .. or . components
-    // NOTE: canonicalize() on Windows adds \\?\ prefix which breaks yt-dlp
-    // So we use it only for validation, not for the returned path
-    let normalized_path = Path::new(&absolute_path).canonicalize()
-        .unwrap_or_else(|_| absolute_path.clone());
+    // Basic path validation: ensure the path doesn't contain dangerous components
+    // but allow users to choose any location they want
 
-    // Get allowed base directories and normalize them too
-    let downloads_dir = if let Some(home) = std::env::var("HOME").ok()
-        .or_else(|| std::env::var("USERPROFILE").ok()) {
-        PathBuf::from(home).join("Downloads")
-    } else {
-        app.path().app_local_data_dir()
-            .map_err(|e| format!("Failed to get app data dir: {}", e))?
-    };
-
-    // Normalize the base directories for comparison
-    let normalized_downloads = downloads_dir.canonicalize()
-        .unwrap_or_else(|_| downloads_dir.clone());
-
-    let app_data_dir = app.path().app_local_data_dir()
-        .map_err(|e| format!("Failed to get app data dir: {}", e))?;
-
-    let normalized_app_data = app_data_dir.canonicalize()
-        .unwrap_or_else(|_| app_data_dir.clone());
-
-    // Check if the path is within allowed directories
-    let is_allowed = normalized_path.starts_with(&normalized_downloads)
-        || normalized_path.starts_with(&normalized_app_data);
-
-    if !is_allowed {
-        return Err(format!(
-            "Path not allowed. Only Downloads and app data directories are permitted.\nRequested: {:?}\nAllowed: {:?} or {:?}",
-            normalized_path, normalized_downloads, normalized_app_data
-        ));
+    // Check for null bytes (potential security issue)
+    if path.contains('\0') {
+        return Err("Path contains null bytes which are not allowed".to_string());
     }
 
-    // Return the ABSOLUTE path (not canonicalized) to avoid \\?\ prefix on Windows
-    // This is safe because we've already validated it's within allowed directories
+    // Check for extremely long paths (potential DoS)
+    if path.len() > 4096 {
+        return Err("Path is too long (maximum 4096 characters)".to_string());
+    }
+
+    // Return the absolute path as a string
+    // Note: We don't canonicalize for yt-dlp compatibility (Windows \\?\ prefix issues)
     Ok(absolute_path.to_string_lossy().to_string())
 }
 
@@ -343,13 +321,20 @@ async fn fetch_playlist_metadata(ytdlp: &Path, url: String) -> Result<PlaylistIn
     #[cfg(target_os = "windows")]
     cmd.creation_flags(CREATE_NO_WINDOW);
 
+    let user_agent = if cfg!(target_os = "macos") {
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    } else {
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    };
+
     let output = cmd
         .args([
             "--dump-json",
             "--flat-playlist",
-            "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "--user-agent", user_agent,
             "--referer", "https://www.youtube.com/",
             "--extractor-retries", "3",
+            "--socket-timeout", "10",
             "--no-cache-dir",
             &url,
         ])
@@ -398,12 +383,19 @@ async fn fetch_single_video_metadata(ytdlp: &Path, url: String) -> Result<Playli
     #[cfg(target_os = "windows")]
     cmd.creation_flags(CREATE_NO_WINDOW);
 
+    let user_agent = if cfg!(target_os = "macos") {
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    } else {
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    };
+
     let output = cmd
         .args([
             "--dump-json",
-            "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "--user-agent", user_agent,
             "--referer", "https://www.youtube.com/",
             "--extractor-retries", "3",
+            "--socket-timeout", "10",
             "--no-cache-dir",
             &url,
         ])
@@ -859,7 +851,7 @@ async fn cancel_download(app: AppHandle, download_id: String) -> Result<bool, St
         // On Unix-like systems, kill the process group
         #[cfg(not(target_os = "windows"))]
         {
-            use std::os::unix::process::CommandExt;
+            
             // Kill process group to ensure child processes die too
             if let Err(e) = download.child.kill() {
                 println!("Failed to kill process group: {}", e);

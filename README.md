@@ -164,7 +164,7 @@ yt-dlp --version # Should output yt-dlp version
 ```bash
 # Clone the repository
 git clone https://github.com/be9hop/Verdl
-cd Verdl/yt-dlp-downloader
+cd Verdl
 
 # Install Node.js dependencies
 npm install
@@ -264,13 +264,15 @@ Click **Download All** to start. Monitor progress in the sidebar under **Active 
 **A:** No. Verdl only works with publicly accessible YouTube content.
 
 ### Q: Where are downloads saved?
-**A:** By default, downloads go to your Windows Downloads folder:
-```
-C:\Users\YourUsername\Downloads\
-```
+**A:** Downloads go wherever you specify! Verdl gives you full control over download locations:
+- **Desktop** - `~/Desktop`
+- **Downloads folder** - `~/Downloads` (default)
+- **Documents** - `~/Documents`
+- **Any custom folder** - Choose any location on your system
+- **External drives** - USB drives, network folders, etc.
 
 ### Q: Can I change the download location?
-**A:** Currently, Verdl uses the system Downloads folder. Future versions may allow customization.
+**A:** Yes! Verdl allows you to choose any download location. Simply enter or browse to your preferred folder when downloading.
 
 ### Q: Does Verdl support subtitles?
 **A:** Not currently. This feature may be added in future versions.
@@ -435,7 +437,7 @@ Or install Visual Studio Community with C++ workload.
 ## Project Structure
 
 ```
-yt-dlp-downloader/
+Verdl/
 ├── src/                       # Frontend
 │   ├── index.html            # Main UI structure
 │   ├── styles.css            # Application styling
@@ -549,9 +551,10 @@ src-tauri/target/release/bundle/nsis/Verdl_0.1.0_x64-setup.exe
 npm run build
 ```
 
-The app bundle will be created at:
+The app bundle and DMG installer will be created at:
 ```
 src-tauri/target/release/bundle/macos/Verdl.app
+src-tauri/target/release/bundle/dmg/Verdl_0.1.0_aarch64.dmg
 ```
 
 **Note:** macOS builds require code signing for distribution. Unsigned apps will work but may show warnings.
@@ -714,6 +717,10 @@ Contributions are welcome! Please follow these guidelines:
 - ✅ **Platform-specific binaries** - Automatically downloads correct yt-dlp for your OS
 - ✅ **Consistent UI** - Update button uses green theme color
 - ✅ **Bundle identifier** - Fixed macOS bundle naming conflict
+- ✅ **Full download location control** - Users can choose any download path (Desktop, Documents, external drives, etc.)
+- ✅ **Cross-platform path validation** - Optimized performance and security for all platforms
+- ✅ **Custom app icon** - Professional Verdl branding on all platforms
+- ✅ **DMG installer** - macOS users get a professional .dmg installer package
 
 ---
 

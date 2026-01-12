@@ -19,7 +19,7 @@ dist-ssr
 src-tauri/target
 src-tauri/Cargo.lock
 
-# Tauri build bundles (optional - remove if you want to commit installers)
+# Tauri build bundles (remove this line if you want to commit installers)
 src-tauri/target/release/bundle/
 
 # Editor directories and files
@@ -39,6 +39,17 @@ Thumbs.db
 *.swp
 *.swo
 
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Icon creation artifacts
+src-tauri/temp_icon/
+src-tauri/icons/*.iconset
+src-tauri/icons/Verdl-icon-*.png
+src-tauri/icons/Verdl-app-icon.png
+
 # Environment files
 .env
 .env.local
@@ -46,5 +57,5 @@ Thumbs.db
 
 # Downloaded yt-dlp binaries (if testing)
 src-tauri/resources/yt-dlp.exe
-src-tauri/resources/yt-dlp_macos
+src-tauri/resources/yt-dlp
 src-tauri/resources/yt-dlp_linux
