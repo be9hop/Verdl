@@ -9,7 +9,7 @@
 ![Tauri](https://img.shields.io/badge/Tauri-2.0-FFC131?style=for-the-badge&logo=tauri)
 ![Rust](https://img.shields.io/badge/Rust-1.81+-000000?style=for-the-badge&logo=rust)
 ![Cross-platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-239120?style=for-the-badge)
+![License](https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge)
 
 [Features](#features) • [Installation](#installation) • [Usage](#usage) • [FAQ](#faq) • [Troubleshooting](#troubleshooting)
 
@@ -164,8 +164,8 @@ yt-dlp --version # Should output yt-dlp version
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd yt-dlp-downloader
+git clone https://github.com/be9hop/Verdl
+cd Verdl/yt-dlp-downloader
 
 # Install Node.js dependencies
 npm install
@@ -653,7 +653,13 @@ The app uses strict CSP headers to prevent XSS attacks and ensure secure communi
 
 ## License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
+
+This means:
+- You are free to use, modify, and distribute the software
+- Any derivative works must also be licensed under GPL-3.0
+- You must provide source code for any distributed modifications
+- See the LICENSE file for the full terms and conditions
 
 ---
 
